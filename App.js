@@ -31,24 +31,29 @@ export default class App extends Component<Props> {
         <TouchableOpacity
           onPress={async () => {
             try {
-              const granted = await PermissionsAndroid.request(
-                PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
-                {
-                  title: 'Permission Writte',
-                  message: 'The App need permission to Writter'
-                }
-              )
-              if (granted === PermissionsAndroid.RESULTS.GRANTED
-                || granted === true) {
-                const shareOptions = {
-                    title: "React Native",
-                    type: 'application/pdf',
-                    url: `data:application/pdf;base64,${PDF_BASE64}`,
-                    showAppsToView: true,
+              const shareOptions = {
+                title: "React Native",
+                type: 'application/pdf',
+                url: `data:application/pdf;base64,${PDF_BASE64}`,
+                showAppsToView: true,
+              }
+
+              if(Platform.OS == 'android') {
+                const granted = await PermissionsAndroid.request(
+                  PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+                  {
+                    title: 'Permission Writte',
+                    message: 'The App need permission to Writter'
                   }
-                  setTimeout(() => {Share.open(shareOptions);}, 200);
+                )
+                if (granted === PermissionsAndroid.RESULTS.GRANTED
+                  || granted === true) {
+                     setTimeout(() => {Share.open(shareOptions);}, 200);
+                } else {
+                  Alert.alert('Permission Denied', 'Not possible continue');
+                }
               } else {
-                Alert.alert('Permission Denied', 'Not possible continue');
+                 setTimeout(() => {Share.open(shareOptions);}, 200);
               }
             } catch (err) {
               console.warn(err)
