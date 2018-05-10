@@ -11,6 +11,8 @@ import {
   Text,
   View,
   TouchableOpacity,
+  PermissionsAndroid,
+  Alert,
 } from 'react-native';
 import Share from 'react-native-share';
 
@@ -27,23 +29,34 @@ export default class App extends Component<Props> {
     return (
       <View style={styles.container}>
         <TouchableOpacity
-          onPress={() => {
-            Share.open({
-              title: "React Native",
-              type: 'application/pdf',
-              url: 'data/data/Download/boleto.php',
-              showAppsToView: true,
-            });
+          onPress={async () => {
+            try {
+              const granted = await PermissionsAndroid.request(
+                PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+                {
+                  title: 'Permission Writte',
+                  message: 'The App need permission to Writter'
+                }
+              )
+              if (granted === PermissionsAndroid.RESULTS.GRANTED
+                || granted === true) {
+                const shareOptions = {
+                    title: "React Native",
+                    type: 'application/pdf',
+                    url: `data:application/pdf;base64,${PDF_BASE64}`,
+                    showAppsToView: true,
+                  }
+                  setTimeout(() => {Share.open(shareOptions);}, 200);
+              } else {
+                Alert.alert('Permission Denied', 'Not possible continue');
+              }
+            } catch (err) {
+              console.warn(err)
+            }
           }}
         >
           <Text style={styles.welcome}>
-            Welcome to React Native!
-          </Text>     
-          <Text style={styles.instructions}>
-            To get started, edit App.js
-          </Text>
-          <Text style={styles.instructions}>
-            {instructions}
+            Tap in here to open base64 in anoter app
           </Text>
         </TouchableOpacity>
       </View>

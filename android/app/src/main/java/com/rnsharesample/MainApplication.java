@@ -49,6 +49,6 @@ public class MainApplication extends Application implements ShareApplication, Re
 
   @Override
   public String getFileProviderAuthority() {
-    return "com.example.yourappidhere.provider";
+    return "com.rnsharesample";
   }
 }
